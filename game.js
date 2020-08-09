@@ -1,6 +1,5 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable no-multiple-empty-lines */
-
 window.addEventListener('load', () => {
     game.start();
 });
@@ -50,25 +49,26 @@ const game = {
         }
     },
     run: function() {
-        this.render();
-    },
-    render: function() {
         window.requestAnimationFrame(() => {
-            this.ctx.drawImage(this.sprites.background, 0, 0);
-            this.ctx.drawImage(
-                this.sprites.ball,
-                0, // позиция смещения img
-                0, // позиция смещения img
-                this.ball.width,
-                this.ball.height,
-                this.ball.x,
-                this.ball.y,
-                this.ball.width, // масштаб
-                this.ball.height // масштаб
-            );
-            this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
-            this.renderBlock();
+            this.render();
+            this.run();
         });
+    },
+    render: function () {
+        this.ctx.drawImage(this.sprites.background, 0, 0);
+        this.ctx.drawImage(
+            this.sprites.ball,
+            0, // позиция смещения img
+            0, // позиция смещения img
+            this.ball.width,
+            this.ball.height,
+            this.ball.x,
+            this.ball.y,
+            this.ball.width, // масштаб
+            this.ball.height // масштаб
+        );
+        this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
+        this.renderBlock();
     },
     renderBlock: function() {
         for (const item of this.blocks) {
