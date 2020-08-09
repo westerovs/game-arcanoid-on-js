@@ -6,6 +6,11 @@ window.addEventListener('load', () => {
     game.start();
 });
 
+const KEYS = {
+    LEFT: 37,
+    RIGHT: 39,
+};
+
 const game = {
     ctx: null,
     ball: null,
@@ -20,25 +25,11 @@ const game = {
         block: null,
     },
     setEvents() {
-        window.addEventListener('keydown', (event) => {
-            let key = event;
-
-            if (key.keyCode === 37) {
-                this.platform.dx = -this.platform.velocity; 
-            }
-            if (key.keyCode === 39) {
-                this.platform.dx = this.platform.velocity; 
-            }
+        window.addEventListener('keydown', event => {
+            this.platform.start(event.keyCode);
         });
-        window.addEventListener('keyup', (event) => {
-            let key = event;
-
-            if (key.keyCode === 37) {
-                this.platform.dx = 0; 
-            }
-            if (key.keyCode === 39) {
-                this.platform.dx = 0; 
-            }
+        window.addEventListener('keyup', event => {
+            this.platform.stop(event.keyCode);
         });
     },
     init: function() {
@@ -95,7 +86,7 @@ const game = {
             this.ball.y,
             this.ball.width, // масштаб
             this.ball.height // масштаб
-        );
+            );
         this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
         this.renderBlocks();
     },
@@ -129,6 +120,23 @@ game.platform = {
         // если платформа движется
         if (this.dx) {
             this.x += this.dx;
+            game.ball.x += this.dx;
+        }
+    },
+    start(direction) {
+        if (direction === KEYS.LEFT) {
+            this.dx = -this.velocity;
+        }
+        if (direction === KEYS.RIGHT) {
+            this.dx = this.velocity;
+        }
+    },
+    stop(direction) {
+        if (direction === KEYS.LEFT) {
+            this.dx = 0;
+        }
+        if (direction === KEYS.RIGHT) {
+            this.dx = 0;
         }
     }
 };
