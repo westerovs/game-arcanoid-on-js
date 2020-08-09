@@ -1,9 +1,10 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable no-multiple-empty-lines */
+// let test = 'game started';
+
 window.addEventListener('load', () => {
     game.start();
 });
-
 
 const game = {
     ctx: null,
@@ -18,8 +19,31 @@ const game = {
         platform: null,
         block: null,
     },
+    setEvents() {
+        window.addEventListener('keydown', (event) => {
+            let key = event;
+
+            if (key.keyCode === 37) {
+                this.platform.dx = -this.platform.velocity; 
+            }
+            if (key.keyCode === 39) {
+                this.platform.dx = this.platform.velocity; 
+            }
+        });
+        window.addEventListener('keyup', (event) => {
+            let key = event;
+
+            if (key.keyCode === 37) {
+                this.platform.dx = 0; 
+            }
+            if (key.keyCode === 39) {
+                this.platform.dx = 0; 
+            }
+        });
+    },
     init: function() {
         this.ctx = document.getElementById('mycanvas').getContext('2d');
+        this.setEvents();
     },
     preload(callback) {
         let loaded = 0;
@@ -48,8 +72,13 @@ const game = {
             }
         }
     },
+    update() {
+        this.platform.move();
+    },
     run: function() {
         window.requestAnimationFrame(() => {
+            // console.log(test);
+            this.update();
             this.render();
             this.run();
         });
@@ -68,9 +97,9 @@ const game = {
             this.ball.height // масштаб
         );
         this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
-        this.renderBlock();
+        this.renderBlocks();
     },
-    renderBlock: function() {
+    renderBlocks: function() {
         for (const item of this.blocks) {
             this.ctx.drawImage(this.sprites.block, item.x, item.y);
         }
@@ -94,6 +123,14 @@ game.ball = {
 game.platform = {
     x: 280,
     y: 300,
+    dx: 0,
+    velocity: 6,
+    move() {
+        // если платформа движется
+        if (this.dx) {
+            this.x += this.dx;
+        }
+    }
 };
 
 
