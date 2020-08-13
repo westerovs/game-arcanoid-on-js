@@ -9,6 +9,7 @@ window.addEventListener('load', () => {
 const KEYS = {
     LEFT: 37,
     RIGHT: 39,
+    SPACE: 32
 };
 
 const game = {
@@ -26,10 +27,17 @@ const game = {
     },
     setEvents() {
         window.addEventListener('keydown', event => {
-            this.platform.start(event.keyCode);
+            if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
+                this.platform.start(event.keyCode);
+            }
+            if (event.keyCode === KEYS.SPACE) {
+                this.platform.fire();
+            }
         });
         window.addEventListener('keyup', event => {
-            this.platform.stop(event.keyCode);
+            if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
+                this.platform.stop();
+            }
         });
     },
     init: function() {
@@ -65,6 +73,7 @@ const game = {
     },
     update() {
         this.platform.move();
+        this.ball.move();
     },
     run: function() {
         window.requestAnimationFrame(() => {
@@ -107,8 +116,19 @@ const game = {
 game.ball = {
     x: 320,
     y: 280,
+    dy: 0,
+    velocity: 3,
     width: 20,
     height: 20,
+    start() {
+        this.y += -this.dy;
+        this.dy = this.velocity;
+    },
+    move() {
+        if (this.dy) {
+            this.y += -this.dy;
+        }
+    }
 };
 
 game.platform = {
@@ -116,27 +136,29 @@ game.platform = {
     y: 300,
     dx: 0,
     velocity: 6,
-    move() {
-        // если платформа движется
-        if (this.dx) {
-            this.x += this.dx;
-            game.ball.x += this.dx;
-        }
-    },
+    ball: game.ball,
     start(direction) {
         if (direction === KEYS.LEFT) {
             this.dx = -this.velocity;
-        }
-        if (direction === KEYS.RIGHT) {
+        } else if (direction === KEYS.RIGHT) {
             this.dx = this.velocity;
         }
     },
-    stop(direction) {
-        if (direction === KEYS.LEFT) {
-            this.dx = 0;
+    stop() {
+        this.dx = 0;
+    },
+    move() {
+        if (this.dx) { // if платформа движется
+            this.x += this.dx;
+            if (this.ball) {
+                this.ball.x += this.dx;
+            }
         }
-        if (direction === KEYS.RIGHT) {
-            this.dx = 0;
+    },
+    fire() {
+        if (this.ball) {
+            this.ball.start();
+            this.ball = null;
         }
     }
 };
